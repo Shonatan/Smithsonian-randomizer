@@ -1,37 +1,26 @@
 import requests
-from PIL import Image
-from io import BytesIO
 import random
 
-# Function to get random image from Smithsonian API
+# Function to get random image media URL from Smithsonian API
 def get_random_image():
     url = 'https://api.si.edu/openaccess/api/v1.0/search'
     params = {
-        'api_key': 'Os73S8RAyylskTqIKvcmaerE9gNtYDTp9vbTcKKz',  # Replace with your actual API key
-        'q': 'art',  # Search query, e.g., 'art'
-        'rows': 10,  # Number of results to fetch
-        'start': random.randint(0, 100)  # Random start index for pagination
+        'api_key': 'Os73S8RAyylskTqIKvcmaerE9gNtYDTp9vbTcKKz',
+        'q': 'mask',
+        'rows': 10,
+        'start': random.randint(0, 100)
     }
+
     response = requests.get(url, params=params)
     data = response.json()
-    
-    # Get a random image URL from the results
-    items = data['response']['docs']
-    if items:
-        image_url = random.choice(items)['media'][0]['url']
-        return image_url
-    return None
 
-# Function to display the image
-def display_image(image_url):
-    response = requests.get(image_url)
-    img = Image.open(BytesIO(response.content))
-    img.show()
+    # Return the first media URL found
+    try:
+        return data['response']['docs'][0]['online_media']['media'][0]['content']
+    except (KeyError, IndexError):
+        return "No media found."
 
 # Main script
 if __name__ == "__main__":
-    image_url = get_random_image()
-    if image_url:
-        display_image(image_url)
-    else:
-        print("No images found.")
+    media_url = get_random_image()
+    print(f"Media URL: {media_url}")

@@ -1,26 +1,22 @@
 import requests
-import random
+import json  # Import json module for pretty-printing
 
-# Function to get random image media URL from Smithsonian API
-def get_random_image():
+# Test the API key and print the response neatly
+def test_api_key():
     url = 'https://api.si.edu/openaccess/api/v1.0/search'
     params = {
         'api_key': 'Os73S8RAyylskTqIKvcmaerE9gNtYDTp9vbTcKKz',
-        'q': 'mask',
-        'rows': 10,
-        'start': random.randint(0, 100)
+        'q': 'art',  # Example query
+        'rows': 1  # Limit to 1 result for simplicity
     }
-
     response = requests.get(url, params=params)
-    data = response.json()
+    
+    # Pretty-print the JSON response
+    if response.status_code == 200:
+        print("API Key is working!")
+        print(json.dumps(response.json(), indent=4))  # Pretty-print the response
+    else:
+        print(f"Failed to connect: {response.status_code}")
 
-    # Return the first media URL found
-    try:
-        return data['response']['docs'][0]['online_media']['media'][0]['content']
-    except (KeyError, IndexError):
-        return "No media found."
-
-# Main script
 if __name__ == "__main__":
-    media_url = get_random_image()
-    print(f"Media URL: {media_url}")
+    test_api_key()
